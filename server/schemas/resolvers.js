@@ -17,20 +17,20 @@ const resolvers={
         addUser: async(parent, args)=>{
             const user = await User.create(args);
             const token = signToken(user);
-            return{token, user};
+            return{ token, user };
         },
 
         login: async (parent, { email, password }) => {
-            const user = await User.findOne({ email });
+            const user = await User.findOne( { email } );
             if (!user) {
-              throw new AuthenticationError('Incorrect email and/or password.');
+              throw new AuthenticationError('Incorrect email and/or password.')
             }
             const correctPw = await user.isCorrectPassword(password);
             if (!correctPw) {
-              throw new AuthenticationError('Incorrect email and/or password.');
+              throw new AuthenticationError('Incorrect email and/or password.')
             }
-            const token  =signToken(user);
-            return {token, user};
+            const token = signToken(user);
+            return { token, user };
         },
 
         saveBook: async(parent, args, context)=>{
@@ -45,12 +45,12 @@ const resolvers={
             throw new Error('Failed to add book.');
         },
 
-        removeBook: async (parent, {bookId}, context) =>{
+        removeBook: async (parent, { bookId }, context) =>{
             if(context.user){
                 const updatedUser = await User.findOneAndUpdate(
-                    {_id: context.user._id},
-                    {$pull: {savedBooks: {bookId}}},
-                    {new: true}
+                    { _id: context.user._id },
+                    { $addToSet: {savedBooks: book} },
+                    { new: true }
                 );
                 return updatedUser;
             }
